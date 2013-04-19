@@ -11,46 +11,31 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <style type="text/css">
-    #main_content div{
-      width: 50%;
-      margin: 0 auto;
-      padding: 2.44em;
-      background: #ccc;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      box-shadow: 0 5px 3px #ddd;
-      font-size: 110%;
+
+    #viz-container {
+      font: 10px 'Helvetica';
     }
-    #main_content div h2{
-      margin-bottom: 1em;
-      text-transform: capitalize;
-      text-decoration: underline; 
-      text-align: center;
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
     }
-    #main_content div input{
-      float: right;
-      border-radius: 5px;
-      font-size: 110%;
-      width: 40%;
-      text-align: center;
+
+    .bar {
+      fill: steelblue;
     }
-    #main_content div div {
-      width: 40%;
-      margin: 0 auto 1em;
-      padding: 0;
-      border: none;
+
+    .x.axis path {
+      display: none;
     }
-    #main_content div div input{
-      width: 100%;
-      background-color: #23B1E6;
-      color: #fff;
-      border: 1px solid #057ed0;
+
+    .title {
+      font-size: 5em;
+      font-weight: lighter;
     }
-    #main_content div div input:active{
-      background-color: #0A7CC4;
-      border: 1px solid #096eb3;
-    }
-    /*#0A7CC4, #23B1E6*/
+
     </style>
     <title>NHSGovlab by paatsinsuwan</title>
   </head>
@@ -73,17 +58,107 @@
         <hr>
 
         <section id="main_content">
-          <div>
-            <h2>enter your info</h2>
-            <label for="username">Name:</label><input type="text" name="username" /><br><br>
-            <label for="age">Age:</label><input type="text" name="age" /><br><br>
-            <label for="weight">Weight(lbs):</label><input type="text" name="weight" /><br><br>
-            <div><input type="button" value="Check" onClick="fetch_info" /></div>
+          <pre><code>dataset is a csv file of value:
+
+age,people
+0-4,540878
+5-9,561115
+10-14,530816
+15-19,520641
+20-24,589831
+25-29,680659
+30-34,687362
+35-39,660901
+40-44,602379
+45-49,531118
+50-54,481267
+55-59,369105
+60-64,314349
+65-69,259167
+70-74,235627
+75-79,193221
+80-84,128139
+85+,121703
+
+extract from nycopendata.socrata.com</code></pre>
+          <hr>
+          <h2>Projected Population</h2>
+          <div id="viz-container">
           </div>
-          
+
         </section>
 
         <footer>
+          <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+          <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+          <script type="text/javascript">
+          var margin = {top: 20, right: 20, bottom: 30, left: 40},
+              width = 660 - margin.left - margin.right,
+              height = 500 - margin.top - margin.bottom;
+          var year = "2000";
+
+          var x = d3.scale.ordinal()
+              .rangeRoundBands([0, width], .1);
+
+          var y = d3.scale.linear()
+              .range([height, 0]);
+
+          var xAxis = d3.svg.axis()
+              .scale(x)
+              .orient("bottom");
+
+          var yAxis = d3.svg.axis()
+              .scale(y)
+              .orient("left")
+              .tickFormat(function(d) { return Math.round(d / 1e3) + "K"; });
+
+          var svg = d3.select("#viz-container").append("svg")
+              .attr("width", width + margin.left + margin.right)
+              .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+          var title = svg.append("text")
+            .attr("class", "title")
+            .attr("dx", width - margin.left - 50)
+            .attr("dy", ".71em")
+            .text(year);
+
+          d3.csv(year+".csv", function(error, data) {
+
+            // data.forEach(function(d) {
+            //   d.people = +d.people;
+            // });
+
+            x.domain(data.map(function(d) { return d.age; }));
+            y.domain([0, d3.max(data, function(d) { return d.people; })]);
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+              .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("People");
+
+            svg.selectAll(".bar")
+                .data(data)
+              .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.age); })
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) { return y(d.people); })
+                .attr("height", function(d) { return height - y(d.people); });
+
+          });
+          </script>
           NHSGovlab is maintained by <a href="https://github.com/paatsinsuwan">paatsinsuwan</a><br>
           And sponsored by <a href="http://wagner.nyu.edu/centers/govlab">GovLab</a><br>
           This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.

@@ -10,6 +10,48 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <style type="text/css">
+    #main_content div{
+      width: 50%;
+      margin: 0 auto;
+      padding: 2.44em;
+      background: #ccc;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 5px 3px #ddd;
+      font-size: 110%;
+    }
+    #main_content div h2{
+      margin-bottom: 1em;
+      text-transform: capitalize;
+      text-decoration: underline; 
+      text-align: center;
+    }
+    #main_content div input{
+      float: right;
+      border-radius: 5px;
+      font-size: 110%;
+      width: 40%;
+      text-align: center;
+    }
+    #main_content div div {
+      width: 40%;
+      margin: 0 auto 1em;
+      padding: 0;
+      border: none;
+    }
+    #main_content div div input{
+      width: 100%;
+      background-color: #23B1E6;
+      color: #fff;
+      border: 1px solid #057ed0;
+    }
+    #main_content div div input:active{
+      background-color: #0A7CC4;
+      border: 1px solid #096eb3;
+    }
+    /*#0A7CC4, #23B1E6*/
+    </style>
     <title>NHSGovlab by paatsinsuwan</title>
   </head>
 
@@ -31,10 +73,14 @@
         <hr>
 
         <section id="main_content">
-          <label for="username">Name:</label><input type="text" name="username" /><br>
-          <label for="age">Age:</label><input type="text" name="age" /><br>
-          <label for="weight">Weight(lbs):</label><input type="text" name="weight" /><br>
-          <input type="button" value="Check" onClick="fetch_info" />
+          <div>
+            <h2>enter your info</h2>
+            <label for="username">Name:</label><input type="text" name="username" /><br><br>
+            <label for="age">Age:</label><input type="text" name="age" /><br><br>
+            <label for="weight">Weight(lbs):</label><input type="text" name="weight" /><br><br>
+            <div><input type="button" value="Check" onClick="fetch_info" /></div>
+          </div>
+          
         </section>
 
         <footer>
